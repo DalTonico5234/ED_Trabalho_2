@@ -1,0 +1,116 @@
+
+#include "compactador.h"
+
+#define TAM_ASCII 256
+
+struct compactador
+{
+    FILE *original;
+    FILE *compactado;
+    Arvore *compactacao;
+    bitmap **tabela_compactacao;
+    int caracacteres_distintos;
+};
+
+void leArquivo(int *caracteres, FILE *original);
+
+Compactador *criaCompactador(char *caminho)
+{
+    Compactador *compact = (Compactador *)malloc(sizeof(Compactador));
+
+    compact->caracacteres_distintos = 0;
+    compact->original = compact->compactado = NULL;
+    compact->compactacao = NULL;
+    compact->tabela_compactacao = NULL;
+
+    compact->original = fopen(caminho, "r");
+    compact->compactado = fopen("./compactado.bin", "wb");
+
+    if (!compact->original || !compact->compactado)
+    {
+        printf("ERRO NA ABERTURA DOS ARQUIVOS: verifique o caminho passado!\n\n");
+        exit(1);
+    }
+
+    return compact;
+}
+
+void preencheCompacator(Compactador *compact)
+{
+    Lista *lista_carac = criaListaVazia();
+
+    int caracteres[TAM_ASCII] = {0};
+
+    leArquivo(caracteres, compact->original);
+
+    for (int i = 0; i < TAM_ASCII; i++)
+    {
+        if (caracteres[i] != 0)
+        {
+            Arvore *no = criaArvore(i, 1, caracteres[i], NULL, NULL);
+            insereLista(lista_carac, no);
+            compact->caracacteres_distintos++;
+        }
+    }
+
+    compact->compactacao = criaArvoreHuffman(lista_carac);
+
+    compact->tabela_compactacao = (bitmap **)calloc(compact->caracacteres_distintos, sizeof(bitmap *));
+
+    unsigned short int caminho[8] = {0};
+
+    criaBitmaps(compact->compactacao, compact->tabela_compactacao, 0, caminho);
+
+    liberaLista(lista_carac);
+}
+
+void executaCompactacao(Compactador *compact)
+{
+    for (int j = 0; j < compact->caracacteres_distintos; j++)
+    {
+        printf("MAP %d:\n", j);
+        for (unsigned int i = 0; i < bitmapGetLength(compact->tabela_compactacao[j]); i++)
+        {
+            printf("bit #%d = %0x\n", i, bitmapGetBit(compact->tabela_compactacao[j], i));
+        }
+        printf("\n");
+    }
+    // imprimeArvore(compact->compactacao);
+}
+
+void leArquivo(int *caracteres, FILE *original)
+{
+    char lido;
+    while (fscanf(original, "%c", &lido) != EOF)
+    {
+        caracteres[(int)lido]++;
+    }
+}
+
+void liberaCompactador(Compactador *compact)
+{
+    if (compact)
+    {
+        if (compact->compactacao)
+        {
+            liberaArvore(compact->compactacao);
+        }
+        if (compact->original)
+        {
+            fclose(compact->original);
+        }
+        if (compact->compactado)
+        {
+            fclose(compact->compactado);
+        }
+        if (compact->tabela_compactacao)
+        {
+            for (int i = 0; i < compact->caracacteres_distintos; i++)
+            {
+                bitmapLibera(compact->tabela_compactacao[i]);
+            }
+            free(compact->tabela_compactacao);
+        }
+        free(compact);
+    }
+}
