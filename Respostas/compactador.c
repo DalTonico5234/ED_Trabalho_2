@@ -23,7 +23,7 @@ Compactador *criaCompactador(char *caminho)
     compact->compactacao = NULL;
     compact->tabela_compactacao = NULL;
 
-    compact->original = fopen(caminho, "r");
+    compact->original = fopen(caminho, "rb");
     compact->compactado = fopen("./compactado.bin", "wb");
 
     if (!compact->original || !compact->compactado)
@@ -81,7 +81,7 @@ void executaCompactacao(Compactador *compact)
 void leArquivo(int *caracteres, FILE *original)
 {
     char lido;
-    while (fscanf(original, "%c", &lido) != EOF)
+    while (fread(&lido, sizeof(char), 1, original) == 1)
     {
         caracteres[(int)lido]++;
     }
