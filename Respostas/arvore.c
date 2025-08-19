@@ -5,17 +5,16 @@
 
 struct Arvore
 {
-  char caracter;
+  unsigned short int caracter;
   Arvore *esq;
   Arvore *dir;
-  int ehletra;
-  int frequencia;
+  unsigned short int ehletra;
+  unsigned int frequencia;
 };
 
 Arvore *criaArvoreVazia() { return NULL; }
 
-Arvore *criaArvore(char caracter, int ehletra, int frequencia, Arvore *esq,
-                   Arvore *dir)
+Arvore *criaArvore(unsigned short int caracter, unsigned short int ehletra, unsigned int frequencia, Arvore *esq, Arvore *dir)
 {
   Arvore *arv = (Arvore *)malloc(sizeof(Arvore));
   arv->caracter = caracter;
@@ -26,10 +25,8 @@ Arvore *criaArvore(char caracter, int ehletra, int frequencia, Arvore *esq,
   return arv;
 }
 
-void criaBitmaps(Arvore *compactacao, bitmap **tabela, int posicao_vetor, unsigned short int caminho[8])
+void criaBitmaps(Arvore *compactacao, bitmap **tabela, int posicao_vetor, unsigned short int caminho[TAM_MAX_CARACTER])
 {
-  static int posicao_tabela = 0;
-
   if (compactacao->ehletra)
   {
     printf("%c ", compactacao->caracter);
@@ -55,8 +52,7 @@ void criaBitmaps(Arvore *compactacao, bitmap **tabela, int posicao_vetor, unsign
     {
       bitmapAppendLeastSignificantBit(sequencia, (unsigned char)caminho[i]);
     }
-    tabela[posicao_tabela] = sequencia;
-    posicao_tabela++;
+    tabela[compactacao->caracter] = sequencia;
   }
   if (compactacao->esq) // recursao para a esquerda
   {
@@ -105,6 +101,7 @@ void imprimeArvore(Arvore *arv)
 
 
 
+    
     printf("Esquerda: \n");
     if (arv->esq)
     {
