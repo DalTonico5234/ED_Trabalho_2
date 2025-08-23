@@ -148,7 +148,12 @@ void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado, bitmap *bigmap)
   if (arv->ehletra)
   {
     bitmapAppendLeastSignificantBit(bigmap, 1);
-    //imprimir caracter
+    unsigned short int caracter = arv->caracter;
+    for (int i = 8; i >= 0; i--)
+    {
+      unsigned char bit = (caracter >> i) & 1;
+      bitmapAppendLeastSignificantBit(bigmap, bit);
+    }
   }
   else
   {
@@ -156,5 +161,5 @@ void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado, bitmap *bigmap)
   }
 
   imprimeArvoreNoArquivo(arv->esq, compactado, bigmap);
-  imprimeArvoreNoArquivo(arv->esq, compactado, bigmap);
+  imprimeArvoreNoArquivo(arv->dir, compactado, bigmap);
 }

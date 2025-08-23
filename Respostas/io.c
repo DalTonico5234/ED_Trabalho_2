@@ -34,12 +34,3 @@ void imprimeBinarios(bitmap *bigmap, bitmap *novo, unsigned short int forcaImpre
     }
     
 }
-
-void leArquivo(int *caracteres, FILE *original)
-{
-    char lido;
-    while (fread(&lido, sizeof(char), 1, original) == 1)
-    {
-        caracteres[(int)lido]++;
-    }
-}

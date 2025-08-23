@@ -51,7 +51,11 @@ void preencheCompacator(Compactador *compact)
 
     int caracteres[TAM_ASCII] = {0};
 
-    leArquivo(caracteres, compact->original);
+    char lido;
+    while (fread(&lido, sizeof(char), 1, compact->original) == 1)
+    {
+        caracteres[(int)lido]++;
+    }
 
     Arvore *no;
     for (int i = 0; i < TAM_ASCII; i++)
@@ -78,6 +82,7 @@ void preencheCompacator(Compactador *compact)
 
 void testa(Compactador *compact)
 {
+    printf("TABELA DE COMPACTACAO\n");
     for (int j = 0; j < TAM_ASCII; j++)
     {
         if (compact->tabela_compactacao[j])
@@ -90,7 +95,18 @@ void testa(Compactador *compact)
             printf("\n");
         }
     }
+    printf("\n");
+
+    printf("ARVORE DE COMPACTACAO\n");
     imprimeArvore(compact->compactacao);
+    printf("\n");
+
+    printf("BIGMAP\n");
+    for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
+    {
+        printf("%0x", bitmapGetBit(compact->bigmap, j));
+    }
+    printf("\n");
 }
 
 void executaCompactacao(Compactador *compact)
@@ -99,12 +115,7 @@ void executaCompactacao(Compactador *compact)
 
     imprimeArvoreNoArquivo(compact->compactacao, compact->compactado, compact->bigmap);
 
-    testa(compact);
-    for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
-    {
-        printf("%0x", bitmapGetBit(compact->bigmap, j));
-    }
-    printf("\n");
+    rewind(compact->original); 
 }
 
 void liberaCompactador(Compactador *compact)
@@ -130,6 +141,11 @@ void liberaCompactador(Compactador *compact)
             {
                 bitmapLibera(compact->tabela_compactacao[i]);
             }
+        }
+
+        if (compact->bigmap)
+        {
+            bitmapLibera(compact->bigmap);
         }
 
         free(compact);
