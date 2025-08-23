@@ -20,9 +20,8 @@ void imprimeBinarios(bitmap *bigmap, bitmap *novo, unsigned short int forcaImpre
     }
     else if (forcaImpressao)
     {
+        imprimeBinarios(bigmap, novo, 0, compactado);
         fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bitmapGetLength(bigmap), compactado);
-        bitmapLibera(bigmap);
-        bigmap = NULL;
     }
     // condição para imprimir no bigmap
     else 

@@ -101,7 +101,7 @@ void testa(Compactador *compact)
     imprimeArvore(compact->compactacao);
     printf("\n");
 
-    printf("BIGMAP\n");
+    printf("BIGMAP de tamanho %d\n", bitmapGetLength(compact->bigmap));
     for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
     {
         printf("%0x", bitmapGetBit(compact->bigmap, j));
@@ -115,7 +115,15 @@ void executaCompactacao(Compactador *compact)
 
     imprimeArvoreNoArquivo(compact->compactacao, compact->compactado, compact->bigmap);
 
-    rewind(compact->original); 
+    rewind(compact->original);
+
+    char lido;
+    while (fread(&lido, sizeof(char), 1, compact->original) == 1)
+    {
+        imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0, compact->compactado);
+    }
+    imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1], 1, compact->original);
+    testa(compact);
 }
 
 void liberaCompactador(Compactador *compact)
