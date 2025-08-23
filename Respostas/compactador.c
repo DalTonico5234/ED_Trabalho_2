@@ -1,5 +1,8 @@
 
 #include "compactador.h"
+#include "arvore.h"
+#include "bitmap.h"
+#include "lista.h"
 
 #define TAM_ASCII 257
 

@@ -1,10 +1,10 @@
 #ifndef _LISTA_H
 #define _LISTA_H
 
+#include "arvore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arvore.h"
 
 
 typedef struct Lista Lista;
