@@ -1,10 +1,14 @@
 #include "lista.h"
+#include "arvore.h"
+
 typedef struct Celula Celula;
+
 struct Celula
 {
   Arvore *arvore;
   Celula *prox;
 };
+
 struct Lista
 {
   Celula *prim;

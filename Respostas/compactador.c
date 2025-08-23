@@ -9,6 +9,7 @@ struct compactador
     FILE *compactado;
     Arvore *compactacao;
     bitmap *tabela_compactacao[TAM_ASCII];
+    bitmap *bigmap;
     int caracacteres_distintos;
 };
 
@@ -26,6 +27,8 @@ Compactador *criaCompactador(char *caminho)
     {
         compact->tabela_compactacao[i] = NULL;
     }
+
+    compact->bigmap = NULL;
 
     compact->original = fopen(caminho, "rb");
     compact->compactado = fopen("./compactado.bin", "wb");
@@ -85,15 +88,6 @@ void executaCompactacao(Compactador *compact)
         }
     }
     // imprimeArvore(compact->compactacao);
-}
-
-void leArquivo(int *caracteres, FILE *original)
-{
-    char lido;
-    while (fread(&lido, sizeof(char), 1, original) == 1)
-    {
-        caracteres[(int)lido]++;
-    }
 }
 
 void liberaCompactador(Compactador *compact)

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Arvore
+struct arvore
 {
   unsigned short int caracter;
   Arvore *esq;
@@ -98,10 +98,6 @@ void imprimeArvore(Arvore *arv)
       printf("Frequencia: %d\n", arv->frequencia);
     }
 
-
-
-
-    
     printf("Esquerda: \n");
     if (arv->esq)
     {
@@ -118,9 +114,6 @@ void imprimeArvore(Arvore *arv)
     {
       printf("NULL\n");
     }
-
-
-
 
     printf("Direita: \n");
     if (arv->dir)
@@ -139,9 +132,6 @@ void imprimeArvore(Arvore *arv)
       printf("NULL\n");
     }
 
-
-
-
     if (arv->esq)
     {
       imprimeArvore(arv->esq);
@@ -152,3 +142,21 @@ void imprimeArvore(Arvore *arv)
     }
   }
 }
+
+// void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado)
+// {
+//   static bitmap *sequencia[MAX_BIGMAP];
+//   if (!arv)
+//   {
+//     return;
+//   }
+
+//   // if (arv->ehletra)
+//   // {
+//   // }
+//   // else
+//   // {
+//   // }
+//   imprimeArvoreNoArquivo(arv->esq, compactado);
+//   imprimeArvoreNoArquivo(arv->esq, compactado);
+// }

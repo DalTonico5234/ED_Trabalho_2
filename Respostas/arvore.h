@@ -3,10 +3,12 @@
 #define _ARVORE_H
 
 #include "bitmap.h"
+#include "compactador.h"
+#include "io.h"
 
 #define TAM_MAX_CARACTER 9
 
-typedef struct Arvore Arvore;
+typedef struct arvore Arvore;
 
 Arvore *criaArvoreVazia();
 
