@@ -1,4 +1,4 @@
-all: compile clean run
+all: compile run
 
 debug: debug_compile clean debug_run
 

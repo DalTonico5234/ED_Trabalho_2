@@ -7,6 +7,7 @@
 #include "io.h"
 
 #define TAM_MAX_CARACTER 9
+#define MAX_ARV 
 
 typedef struct arvore Arvore;
 
@@ -15,6 +16,8 @@ Arvore *criaArvoreVazia();
 Arvore *criaArvore(unsigned short int caracter, unsigned short int ehletra, unsigned int frequencia, Arvore *esq, Arvore *dir);
 
 void criaBitmaps(Arvore *compactacao, bitmap **tabela, int posicao_vetor, unsigned short int caminho[TAM_MAX_CARACTER]);
+
+void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado, bitmap *bigmap);
 
 int getFrequencia(Arvore *arv);
 

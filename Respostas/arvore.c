@@ -27,20 +27,6 @@ Arvore *criaArvore(unsigned short int caracter, unsigned short int ehletra, unsi
 
 void criaBitmaps(Arvore *compactacao, bitmap **tabela, int posicao_vetor, unsigned short int caminho[TAM_MAX_CARACTER])
 {
-  if (compactacao->ehletra)
-  {
-    printf("%c ", compactacao->caracter);
-  }
-  else
-  {
-    printf("%d ", compactacao->frequencia);
-  }
-  for (int i = 0; i < posicao_vetor; i++)
-  {
-    printf("%d", caminho[i]);
-  }
-  printf("\n\n");
-
   if (!compactacao)
   {
     return;
@@ -143,20 +129,32 @@ void imprimeArvore(Arvore *arv)
   }
 }
 
-// void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado)
-// {
-//   static bitmap *sequencia[MAX_BIGMAP];
-//   if (!arv)
-//   {
-//     return;
-//   }
+void binario(int n, bitmap *bigmap)
+{
+  if (n)
+  {
+    binario(n / 2, bigmap);
+    bitmapAppendLeastSignificantBit(bigmap, n % 2);
+  }
+}
 
-//   // if (arv->ehletra)
-//   // {
-//   // }
-//   // else
-//   // {
-//   // }
-//   imprimeArvoreNoArquivo(arv->esq, compactado);
-//   imprimeArvoreNoArquivo(arv->esq, compactado);
-// }
+void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado, bitmap *bigmap)
+{
+  if (!arv)
+  {
+    return;
+  }
+
+  if (arv->ehletra)
+  {
+    bitmapAppendLeastSignificantBit(bigmap, 1);
+    //imprimir caracter
+  }
+  else
+  {
+    bitmapAppendLeastSignificantBit(bigmap, 0);
+  }
+
+  imprimeArvoreNoArquivo(arv->esq, compactado, bigmap);
+  imprimeArvoreNoArquivo(arv->esq, compactado, bigmap);
+}

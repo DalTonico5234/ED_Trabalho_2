@@ -11,12 +11,18 @@ void imprimeBinarios(bitmap *bigmap, bitmap *novo, unsigned short int forcaImpre
         bigmap = bitmapInit(MAX_BIGMAP);
     }
     // condição para imprimir no arquivo e resetar o bigmap
-    else if (forcaImpressao || (bitmapGetLength(bigmap) == bitmapGetMaxSize(bigmap)))
+    if ((bitmapGetLength(bigmap) + bitmapGetLength(novo)) >= bitmapGetMaxSize(bigmap))
     {
         fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bitmapGetLength(bigmap), compactado);
         bitmapLibera(bigmap);
         bigmap = NULL;
         imprimeBinarios(bigmap, novo, forcaImpressao, compactado);
+    }
+    else if (forcaImpressao)
+    {
+        fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bitmapGetLength(bigmap), compactado);
+        bitmapLibera(bigmap);
+        bigmap = NULL;
     }
     // condição para imprimir no bigmap
     else 

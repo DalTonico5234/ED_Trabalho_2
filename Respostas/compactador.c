@@ -76,7 +76,7 @@ void preencheCompacator(Compactador *compact)
     liberaLista(lista_carac);
 }
 
-void executaCompactacao(Compactador *compact)
+void testa(Compactador *compact)
 {
     for (int j = 0; j < TAM_ASCII; j++)
     {
@@ -90,7 +90,21 @@ void executaCompactacao(Compactador *compact)
             printf("\n");
         }
     }
-    // imprimeArvore(compact->compactacao);
+    imprimeArvore(compact->compactacao);
+}
+
+void executaCompactacao(Compactador *compact)
+{
+    compact->bigmap = bitmapInit(MAX_BIGMAP);
+
+    imprimeArvoreNoArquivo(compact->compactacao, compact->compactado, compact->bigmap);
+
+    testa(compact);
+    for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
+    {
+        printf("%0x", bitmapGetBit(compact->bigmap, j));
+    }
+    printf("\n");
 }
 
 void liberaCompactador(Compactador *compact)
