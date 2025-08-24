@@ -8,8 +8,9 @@
 
 #define MAX_BIGMAP 25165824 // equivale a 3 MB, em bits
 
-void imprimeBinarios(bitmap *bigmap, bitmap *novo, unsigned short int forcaImpressao, FILE *compactado);
+void imprimeBinarios(bitmap *bigmap, bitmap *novo,
+                     unsigned short int forcaImpressao, FILE *compactado);
 
-void lerByte(FILE *compactado, bitmap *byte);
+int lerBit(FILE *compactado, unsigned char *buffer_byte, int *posicao_bit);
 
 #endif

@@ -6,152 +6,136 @@
 
 #define TAM_ASCII 257
 
-struct compactador
-{
-    FILE *original;
-    FILE *compactado;
-    Arvore *compactacao;
-    bitmap *tabela_compactacao[TAM_ASCII];
-    bitmap *bigmap;
+struct compactador {
+  FILE *original;
+  FILE *compactado;
+  Arvore *compactacao;
+  bitmap *tabela_compactacao[TAM_ASCII];
+  bitmap *bigmap;
 };
 
 void leArquivo(int *caracteres, FILE *original);
 
-Compactador *criaCompactador(char *caminho)
-{
-    Compactador *compact = (Compactador *)malloc(sizeof(Compactador));
+Compactador *criaCompactador(char *caminho) {
+  Compactador *compact = (Compactador *)malloc(sizeof(Compactador));
 
-    compact->original = compact->compactado = NULL;
-    compact->compactacao = NULL;
+  compact->original = compact->compactado = NULL;
+  compact->compactacao = NULL;
 
-    for (int i = 0; i < TAM_ASCII; i++)
-    {
-        compact->tabela_compactacao[i] = NULL;
-    }
+  for (int i = 0; i < TAM_ASCII; i++) {
+    compact->tabela_compactacao[i] = NULL;
+  }
 
-    compact->bigmap = NULL;
+  compact->bigmap = NULL;
 
-    compact->original = fopen(caminho, "rb");
-    compact->compactado = fopen("./compactado.bin", "wb");
+  compact->original = fopen(caminho, "rb");
+  strcat(caminho, ".comp");
 
-    if (!compact->original || !compact->compactado)
-    {
-        printf("ERRO NA ABERTURA DOS ARQUIVOS: verifique o caminho passado!\n\n");
-        exit(1);
-    }
+  compact->compactado = fopen(caminho, "wb");
 
-    return compact;
+  if (!compact->original || !compact->compactado) {
+    printf("ERRO NA ABERTURA DOS ARQUIVOS: verifique o caminho passado!\n\n");
+    exit(1);
+  }
+
+  return compact;
 }
 
-void preencheCompacator(Compactador *compact)
-{
-    Lista *lista_carac = criaListaVazia();
+void preencheCompacator(Compactador *compact) {
+  Lista *lista_carac = criaListaVazia();
 
-    int caracteres[TAM_ASCII] = {0};
+  int caracteres[TAM_ASCII] = {0};
 
-    char lido;
-    while (fread(&lido, sizeof(char), 1, compact->original) == 1)
-    {
-        caracteres[(int)lido]++;
+  char lido;
+  while (fread(&lido, sizeof(char), 1, compact->original) == 1) {
+    caracteres[(int)lido]++;
+  }
+
+  Arvore *no;
+  for (int i = 0; i < TAM_ASCII; i++) {
+    if (caracteres[i] != 0) {
+      no = criaArvore(i, 1, caracteres[i], NULL, NULL);
+      insereLista(lista_carac, no);
     }
+  }
+  no = criaArvore(TAM_ASCII - 1, 1, 1, NULL, NULL);
+  insereLista(lista_carac, no);
 
-    Arvore *no;
-    for (int i = 0; i < TAM_ASCII; i++)
-    {
-        if (caracteres[i] != 0)
-        {
-            no = criaArvore(i, 1, caracteres[i], NULL, NULL);
-            insereLista(lista_carac, no);
-        }
-    }
-    no = criaArvore(TAM_ASCII - 1, 1, 1, NULL, NULL);
-    insereLista(lista_carac, no);
+  compact->compactacao = criaArvoreHuffman(lista_carac);
 
-    compact->compactacao = criaArvoreHuffman(lista_carac);
+  unsigned short int caminho[TAM_MAX_CARACTER] = {0};
 
-    unsigned short int caminho[TAM_MAX_CARACTER] = {0};
+  criaBitmaps(compact->compactacao, compact->tabela_compactacao, 0, caminho);
 
-    criaBitmaps(compact->compactacao, compact->tabela_compactacao, 0, caminho);
-
-    liberaLista(lista_carac);
+  liberaLista(lista_carac);
 }
 
-void testa(Compactador *compact)
-{
-    printf("TABELA DE COMPACTACAO\n");
-    for (int j = 0; j < TAM_ASCII; j++)
-    {
-        if (compact->tabela_compactacao[j])
-        {
-            printf("MAP %d:\n", j);
-            for (unsigned int i = 0; i < bitmapGetLength(compact->tabela_compactacao[j]); i++)
-            {
-                printf("bit #%d = %0x\n", i, bitmapGetBit(compact->tabela_compactacao[j], i));
-            }
-            printf("\n");
-        }
+void testa(Compactador *compact) {
+  printf("TABELA DE COMPACTACAO\n");
+  for (int j = 0; j < TAM_ASCII; j++) {
+    if (compact->tabela_compactacao[j]) {
+      printf("MAP %d:\n", j);
+      for (unsigned int i = 0;
+           i < bitmapGetLength(compact->tabela_compactacao[j]); i++) {
+        printf("bit #%d = %0x\n", i,
+               bitmapGetBit(compact->tabela_compactacao[j], i));
+      }
+      printf("\n");
     }
-    printf("\n");
+  }
+  printf("\n");
 
-    printf("ARVORE DE COMPACTACAO\n");
-    imprimeArvore(compact->compactacao);
-    printf("\n");
+  printf("ARVORE DE COMPACTACAO\n");
+  imprimeArvore(compact->compactacao);
+  printf("\n");
 
-    printf("BIGMAP de tamanho %d\n", bitmapGetLength(compact->bigmap));
-    for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
-    {
-        printf("%0x", bitmapGetBit(compact->bigmap, j));
-    }
-    printf("\n");
+  printf("BIGMAP de tamanho %d\n", bitmapGetLength(compact->bigmap));
+  for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++) {
+    printf("%0x", bitmapGetBit(compact->bigmap, j));
+  }
+  printf("\n");
 }
 
-void executaCompactacao(Compactador *compact)
-{
-    compact->bigmap = bitmapInit(MAX_BIGMAP);
+void executaCompactacao(Compactador *compact) {
+  compact->bigmap = bitmapInit(MAX_BIGMAP);
 
-    imprimeArvoreNoArquivo(compact->compactacao, compact->compactado, compact->bigmap);
+  imprimeArvoreNoArquivo(compact->compactacao, compact->compactado,
+                         compact->bigmap);
 
-    rewind(compact->original);
+  rewind(compact->original);
 
-    char lido;
-    while (fread(&lido, sizeof(char), 1, compact->original) == 1)
-    {
-        imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0, compact->compactado);
-    }
-    imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1], 1, compact->compactado);
-    testa(compact);
+  char lido;
+  while (fread(&lido, sizeof(char), 1, compact->original) == 1) {
+    imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0,
+                    compact->compactado);
+  }
+  imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1],
+                  1, compact->compactado);
+  testa(compact);
 }
 
-void liberaCompactador(Compactador *compact)
-{
-    if (compact)
-    {
-        if (compact->compactacao)
-        {
-            liberaArvore(compact->compactacao);
-        }
-        if (compact->original)
-        {
-            fclose(compact->original);
-        }
-        if (compact->compactado)
-        {
-            fclose(compact->compactado);
-        }
-
-        for (int i = 0; i < TAM_ASCII; i++)
-        {
-            if (compact->tabela_compactacao[i])
-            {
-                bitmapLibera(compact->tabela_compactacao[i]);
-            }
-        }
-
-        if (compact->bigmap)
-        {
-            bitmapLibera(compact->bigmap);
-        }
-
-        free(compact);
+void liberaCompactador(Compactador *compact) {
+  if (compact) {
+    if (compact->compactacao) {
+      liberaArvore(compact->compactacao);
     }
+    if (compact->original) {
+      fclose(compact->original);
+    }
+    if (compact->compactado) {
+      fclose(compact->compactado);
+    }
+
+    for (int i = 0; i < TAM_ASCII; i++) {
+      if (compact->tabela_compactacao[i]) {
+        bitmapLibera(compact->tabela_compactacao[i]);
+      }
+    }
+
+    if (compact->bigmap) {
+      bitmapLibera(compact->bigmap);
+    }
+
+    free(compact);
+  }
 }

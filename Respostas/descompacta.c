@@ -13,13 +13,8 @@ int main(int argc, char *argv[]) {
   strcpy(caminho, "./");
   strcat(caminho, argv[argc - 1]);
 
-  Compactador *compact = criaCompactador(caminho);
-
-  preencheCompacator(compact);
-
-  executaCompactacao(compact);
-
-  liberaCompactador(compact);
-
+  Descompactador *winrar = criaDescompactador(caminho);
+  executaDescompactacao(winrar);
+  liberaDescompactador(winrar);
   return 0;
 }

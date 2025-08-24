@@ -4,8 +4,8 @@
 #define descompactador_h
 
 #include "arvore.h"
+#include "io.h"
 #include <stdio.h>
-
 typedef struct descompactador Descompactador;
 
 Descompactador *criaDescompactador(char *caminho);
