@@ -109,8 +109,11 @@ void executaCompactacao(Compactador *compact) {
     imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0,
                     compact->compactado);
   }
+  // Adiciona o marcador de fim de arquivo
   imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1],
-                  1, compact->compactado);
+                  0, compact->compactado);
+  // Força a impressão final
+  imprimeBinarios(compact->bigmap, NULL, 1, compact->compactado);
 }
 
 void liberaCompactador(Compactador *compact) {

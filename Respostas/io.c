@@ -9,18 +9,41 @@ void imprimeBinarios(bitmap *bigmap, bitmap *novo,
   if (!bigmap) {
     bigmap = bitmapInit(MAX_BIGMAP);
   }
+
+  // Se novo é NULL, apenas força impressão se necessário
+  if (!novo) {
+    if (forcaImpressao && bitmapGetLength(bigmap) > 0) {
+      // Calcula quantos bytes completos escrever
+      unsigned int bytesToWrite = (bitmapGetLength(bigmap) + 7) / 8;
+      fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bytesToWrite,
+             compactado);
+    }
+    return;
+  }
+
   // condição para imprimir no arquivo e resetar o bigmap
   if ((bitmapGetLength(bigmap) + bitmapGetLength(novo)) >=
       bitmapGetMaxSize(bigmap)) {
-    fwrite(bitmapGetContents(bigmap), sizeof(unsigned char),
-           bitmapGetLength(bigmap), compactado);
+    // Escreve os bytes completos
+    unsigned int bytesToWrite = (bitmapGetLength(bigmap) + 7) / 8;
+    fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bytesToWrite,
+           compactado);
     bitmapLibera(bigmap);
-    bigmap = NULL;
-    imprimeBinarios(bigmap, novo, forcaImpressao, compactado);
+    bigmap = bitmapInit(MAX_BIGMAP);
+
+    // Adiciona o novo bitmap ao bigmap limpo
+    for (unsigned int i = 0; i < bitmapGetLength(novo); i++) {
+      bitmapAppendLeastSignificantBit(bigmap, bitmapGetBit(novo, i));
+    }
   } else if (forcaImpressao) {
-    imprimeBinarios(bigmap, novo, 0, compactado);
-    fwrite(bitmapGetContents(bigmap), sizeof(unsigned char),
-           bitmapGetLength(bigmap), compactado);
+    // Adiciona novo ao bigmap atual
+    for (unsigned int i = 0; i < bitmapGetLength(novo); i++) {
+      bitmapAppendLeastSignificantBit(bigmap, bitmapGetBit(novo, i));
+    }
+    // Força impressão
+    unsigned int bytesToWrite = (bitmapGetLength(bigmap) + 7) / 8;
+    fwrite(bitmapGetContents(bigmap), sizeof(unsigned char), bytesToWrite,
+           compactado);
   }
   // condição para imprimir no bigmap
   else {
