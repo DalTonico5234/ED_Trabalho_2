@@ -1,12 +1,22 @@
+/**
+ * @file compactador.c
+ * Implementação do TAD compactador
+ *
+ * Criado e desenvolvido por:
+ * @author Leonardo Cheregati de Oliveira Roxo
+ * @author Matteo Chisté Carvalho Trento
+ *
+ * Parte do 2º Trabalho Prático: Compactador de Huffman, da disciplina Estutura de Dados,
+ * lecionada pela Prof Patrícia Dockhorn Costa, do Departamento de Informática - UFES, no período 2025/1
+ */
 
 #include "compactador.h"
 #include "arvore.h"
 #include "bitmap.h"
 #include "lista.h"
 
-#define TAM_ASCII 257
-
-struct compactador {
+struct compactador
+{
   FILE *original;
   FILE *compactado;
   Arvore *compactacao;
@@ -14,15 +24,15 @@ struct compactador {
   bitmap *bigmap;
 };
 
-void leArquivo(int *caracteres, FILE *original);
-
-Compactador *criaCompactador(char *caminho) {
+Compactador *criaCompactador(char *caminho)
+{
   Compactador *compact = (Compactador *)malloc(sizeof(Compactador));
 
   compact->original = compact->compactado = NULL;
   compact->compactacao = NULL;
 
-  for (int i = 0; i < TAM_ASCII; i++) {
+  for (int i = 0; i < TAM_ASCII; i++)
+  {
     compact->tabela_compactacao[i] = NULL;
   }
 
@@ -33,27 +43,33 @@ Compactador *criaCompactador(char *caminho) {
 
   compact->compactado = fopen(caminho, "wb");
 
-  if (!compact->original || !compact->compactado) {
+  if (!compact->original || !compact->compactado)
+  {
     printf("ERRO NA ABERTURA DOS ARQUIVOS: verifique o caminho passado!\n\n");
+    liberaCompactador(compact);
     exit(1);
   }
 
   return compact;
 }
 
-void preencheCompacator(Compactador *compact) {
+void preencheCompacator(Compactador *compact)
+{
   Lista *lista_carac = criaListaVazia();
 
   int caracteres[TAM_ASCII] = {0};
 
   unsigned char lido;
-  while (fread(&lido, sizeof(unsigned char), 1, compact->original) == 1) {
+  while (fread(&lido, sizeof(unsigned char), 1, compact->original) == 1)
+  {
     caracteres[(int)lido]++;
   }
 
   Arvore *no;
-  for (int i = 0; i < TAM_ASCII; i++) {
-    if (caracteres[i] != 0) {
+  for (int i = 0; i < TAM_ASCII; i++)
+  {
+    if (caracteres[i] != 0)
+    {
       no = criaArvore(i, 1, caracteres[i], NULL, NULL);
       insereLista(lista_carac, no);
     }
@@ -70,13 +86,17 @@ void preencheCompacator(Compactador *compact) {
   liberaLista(lista_carac);
 }
 
-void testa(Compactador *compact) {
+void testa(Compactador *compact)
+{
   printf("TABELA DE COMPACTACAO\n");
-  for (int j = 0; j < TAM_ASCII; j++) {
-    if (compact->tabela_compactacao[j]) {
+  for (int j = 0; j < TAM_ASCII; j++)
+  {
+    if (compact->tabela_compactacao[j])
+    {
       printf("MAP %d:\n", j);
       for (unsigned int i = 0;
-           i < bitmapGetLength(compact->tabela_compactacao[j]); i++) {
+           i < bitmapGetLength(compact->tabela_compactacao[j]); i++)
+      {
         printf("bit #%d = %0x\n", i,
                bitmapGetBit(compact->tabela_compactacao[j], i));
       }
@@ -90,13 +110,15 @@ void testa(Compactador *compact) {
   printf("\n");
 
   printf("BIGMAP de tamanho %d\n", bitmapGetLength(compact->bigmap));
-  for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++) {
+  for (unsigned int j = 0; j < bitmapGetLength(compact->bigmap); j++)
+  {
     printf("%0x", bitmapGetBit(compact->bigmap, j));
   }
   printf("\n");
 }
 
-void executaCompactacao(Compactador *compact) {
+void executaCompactacao(Compactador *compact)
+{
   compact->bigmap = bitmapInit(MAX_BIGMAP);
 
   imprimeArvoreNoArquivo(compact->compactacao, compact->compactado,
@@ -105,36 +127,47 @@ void executaCompactacao(Compactador *compact) {
   rewind(compact->original);
 
   unsigned char lido;
-  while (fread(&lido, sizeof(unsigned char), 1, compact->original) == 1) {
+  while (fread(&lido, sizeof(unsigned char), 1, compact->original) == 1)
+  {
     imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0,
                     compact->compactado);
   }
+
   // Adiciona o marcador de fim de arquivo
   imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1],
                   0, compact->compactado);
+                  
   // Força a impressão final
   imprimeBinarios(compact->bigmap, NULL, 1, compact->compactado);
 }
 
-void liberaCompactador(Compactador *compact) {
-  if (compact) {
-    if (compact->compactacao) {
+void liberaCompactador(Compactador *compact)
+{
+  if (compact)
+  {
+    if (compact->compactacao)
+    {
       liberaArvore(compact->compactacao);
     }
-    if (compact->original) {
+    if (compact->original)
+    {
       fclose(compact->original);
     }
-    if (compact->compactado) {
+    if (compact->compactado)
+    {
       fclose(compact->compactado);
     }
 
-    for (int i = 0; i < TAM_ASCII; i++) {
-      if (compact->tabela_compactacao[i]) {
+    for (int i = 0; i < TAM_ASCII; i++)
+    {
+      if (compact->tabela_compactacao[i])
+      {
         bitmapLibera(compact->tabela_compactacao[i]);
       }
     }
 
-    if (compact->bigmap) {
+    if (compact->bigmap)
+    {
       bitmapLibera(compact->bigmap);
     }
 

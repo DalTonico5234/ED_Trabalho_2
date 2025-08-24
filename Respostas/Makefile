@@ -1,4 +1,4 @@
-all:
+all: debug_compile_compacta debug_compile_descompacta clean run_compacta reset run_descompacta
 
 debug_compacta: debug_compile_compacta clean debug_run_compacta
 
@@ -10,13 +10,16 @@ debug_compile_compacta:
 	gcc arvore.o bitmap.o lista.o io.o compactador.o compacta.o -o compacta
 
 run_compacta: 
-	./compacta teste.txt >saida.txt
+	./compacta teste.txt
 
 debug_run_compacta:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./compacta teste.txt >saida.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./compacta teste.txt
 
 clean:
 	rm *.o
+
+reset:
+	rm teste.txt
 
 compacta: compile_compacta run_compacta
 
@@ -30,9 +33,9 @@ debug_compile_descompacta:
 	gcc arvore.o bitmap.o lista.o io.o descompactador.o descompacta.o -o descompacta
 
 run_descompacta: 
-	./descompacta teste.txt >saida.txt
+	./descompacta teste.txt.comp
 
 debug_run_descompacta:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./descompacta teste.txt.comp >saida.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./descompacta teste.txt.comp
 
 descompacta: compile_descompacta run_descompacta

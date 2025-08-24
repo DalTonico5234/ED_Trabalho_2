@@ -1,5 +1,18 @@
+/**
+ * @file lista.c
+ * Implementação do TAD lista
+ * 
+ * Criado e desenvolvido por:
+ * @author Leonardo Cheregati de Oliveira Roxo 
+ * @author Matteo Chisté Carvalho Trento
+ * 
+ * Parte do 2º Trabalho Prático: Compactador de Huffman, da disciplina Estutura de Dados,
+ * lecionada pela Prof Patrícia Dockhorn Costa, do Departamento de Informática - UFES, no período 2025/1
+ */
+
 #include "lista.h"
-#include "arvore.h"
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct Celula Celula;
 
@@ -9,7 +22,7 @@ struct Celula
   Celula *prox;
 };
 
-struct Lista
+struct lista
 {
   Celula *prim;
   Celula *ult;

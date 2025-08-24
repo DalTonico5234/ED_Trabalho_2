@@ -1,0 +1,2 @@
+Tempo para compactacao: 38.815422 s
+
