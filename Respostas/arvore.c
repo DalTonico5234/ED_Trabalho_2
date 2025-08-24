@@ -163,3 +163,8 @@ void imprimeArvoreNoArquivo(Arvore *arv, FILE *compactado, bitmap *bigmap)
   imprimeArvoreNoArquivo(arv->esq, compactado, bigmap);
   imprimeArvoreNoArquivo(arv->dir, compactado, bigmap);
 }
+
+Arvore *reconstroiArvore(FILE *compactado)
+{
+  
+}

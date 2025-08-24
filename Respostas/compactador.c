@@ -13,7 +13,6 @@ struct compactador
     Arvore *compactacao;
     bitmap *tabela_compactacao[TAM_ASCII];
     bitmap *bigmap;
-    int caracacteres_distintos;
 };
 
 void leArquivo(int *caracteres, FILE *original);
@@ -22,7 +21,6 @@ Compactador *criaCompactador(char *caminho)
 {
     Compactador *compact = (Compactador *)malloc(sizeof(Compactador));
 
-    compact->caracacteres_distintos = 0;
     compact->original = compact->compactado = NULL;
     compact->compactacao = NULL;
 
@@ -64,12 +62,10 @@ void preencheCompacator(Compactador *compact)
         {
             no = criaArvore(i, 1, caracteres[i], NULL, NULL);
             insereLista(lista_carac, no);
-            compact->caracacteres_distintos++;
         }
     }
     no = criaArvore(TAM_ASCII - 1, 1, 1, NULL, NULL);
     insereLista(lista_carac, no);
-    compact->caracacteres_distintos++;
 
     compact->compactacao = criaArvoreHuffman(lista_carac);
 
@@ -122,7 +118,7 @@ void executaCompactacao(Compactador *compact)
     {
         imprimeBinarios(compact->bigmap, compact->tabela_compactacao[(int)lido], 0, compact->compactado);
     }
-    imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1], 1, compact->original);
+    imprimeBinarios(compact->bigmap, compact->tabela_compactacao[TAM_ASCII - 1], 1, compact->compactado);
     testa(compact);
 }
 

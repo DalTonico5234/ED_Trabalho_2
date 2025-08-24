@@ -25,4 +25,6 @@ void liberaArvore(Arvore *arv);
 
 void imprimeArvore(Arvore *arv);
 
+Arvore *reconstroiArvore(FILE *compactado);
+
 #endif

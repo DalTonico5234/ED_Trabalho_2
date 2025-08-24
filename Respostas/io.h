@@ -10,6 +10,6 @@
 
 void imprimeBinarios(bitmap *bigmap, bitmap *novo, unsigned short int forcaImpressao, FILE *compactado);
 
-void leArquivo(int *caracteres, FILE *original);
+void lerByte(FILE *compactado, bitmap *byte);
 
 #endif
