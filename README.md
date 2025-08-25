@@ -48,6 +48,7 @@ Portanto, o desenvolvimento do trabalho foi desafiador, porém gratificante. A p
 
 
 BIBLIOGRAFIA
+
 GeeksforGeeks, Huffman Coding in C
 Programiz, Huffman Coding Algorithm
 GeeksforGeeks, Serialize and Deserialize a Binary Tree
