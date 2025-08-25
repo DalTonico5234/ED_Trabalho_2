@@ -6,11 +6,15 @@ Leonardo Cheregati de Oliveira Roxo
 Matteo Chisté Carvalho Trento
 
 
+
 INTRODUÇÃO
+
 O trabalho desenvolvido é um programa compactador e descompactador de arquivos baseado no algoritmo de Codificação de Huffman. O objetivo do trabalho foi desenvolver um par de programas, "Compactador" e "Descompactador", que operam através da linha de comando para manipular arquivos binários, incluindo arquivos de texto e imagens. A compactação de Huffman é um método de compressão de dados sem perdas que atribui códigos de comprimento variável aos caracteres, onde os caracteres mais frequentes recebem códigos mais curtos, resultando em uma economia significativa de bits. O programa Compactador é responsável por ler um arquivo de entrada, construir uma árvore de Huffman baseada na frequência dos caracteres, e gerar um arquivo compactado que inclui tanto o cabeçalho da árvore quanto os dados codificados. O programa Descompactador, por sua vez, lê o arquivo compactado, reconstrói a árvore a partir do cabeçalho e, em seguida, navega pela árvore para decodificar a sequência de bits e restaurar o arquivo original.
 
 
+
 IMPLEMENTAÇÃO
+
 A implementação foi dividida em vários Tipos Abstratos de Dados (TADs) para promover a modularidade e a clareza do código. Os principais TADs são:
 
 TAD Árvore: Representa a árvore binária de Huffman, crucial para a codificação e decodificação. Todos os nós da árvore armazenam a frequência de um caractere ou a soma das frequências de seus filhos. Os nós folha contêm o caractere e um marcador (ehletra) para diferenciá-los dos nós internos.
@@ -35,6 +39,7 @@ Escrita do Arquivo Original: Escreve o caractere do nó folha no arquivo de saí
 Bilbioteca IO: Contém a maior parte das definições de limite de tamanho, assim como as funções para leitura e escrita de binários em arquivos.
 
 A lógica principal do programa segue os passos do algoritmo de Huffman. O Compactador calcula a frequência dos caracteres, constrói a árvore de Huffman usando a lista ordenada, e então serializa a árvore em pré-ordem para o arquivo de saída. A serialização da árvore é realizada escrevendo um bit 1 para nós folha (seguido pelo caractere em sua versão inteira, com 9 bits) e um bit 0 para nós internos. Um pseudo-caractere de 9 bits (código 256) foi adicionado à árvore para sinalizar o fim da sequência de bits compactados, evitando problemas com bits de preenchimento do sistema operacional. O Descompactador inverte o processo: lê o cabeçalho bit a bit para reconstruir a árvore, e então lê o restante do arquivo, navegando na árvore até encontrar um nó folha e decodificar o caractere correspondente.
+
 
 CONCLUSÃO
 
