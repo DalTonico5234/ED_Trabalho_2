@@ -1,6 +1,9 @@
 # SSH
 id_ed25519.pub
 
+# zipados
+*.zip
+
 # Prerequisites
 *.d
 
